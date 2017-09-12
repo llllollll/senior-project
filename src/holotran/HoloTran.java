@@ -12,7 +12,8 @@ package holotran;
 public class HoloTran {
     
     private static String a = "left";
-    private static String b = "C:\\Users\\BestDark\\Downloads\\Video\\Balto - Steele and Balto.mp4";
+    // private static String b = "C:\\Users\\BestDark\\Downloads\\Video\\Balto - Steele and Balto.mp4";
+    private static String b = "C:\\Users\\BestDark\\Downloads\\Video\\3D.mp4";
     private static String c = "C:\\Users\\BestDark\\Downloads\\Video\\out\\";
     public static void main(String[] args) {
         HoloTranView theView = new HoloTranView();

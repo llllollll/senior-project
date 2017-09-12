@@ -29,10 +29,10 @@ public class ImageFromVideo extends MediaListenerAdapter {
         ImageFromVideo.inputFile = input;
         ImageFromVideo.outputFilePrefix = output;
         ImageFromVideo.setProcess = set;
-        mainImageFromVideo();
+        mainFunction();
     }
     
-    public void mainImageFromVideo(){
+    public void mainFunction(){
         IMediaReader mediaReader = ToolFactory.makeReader(inputFile);
         mediaReader.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
         mediaReader.addListener(new ImageSnapListener());
@@ -67,7 +67,7 @@ public class ImageFromVideo extends MediaListenerAdapter {
             if(event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES){
                 double seconds = ((double) event.getTimeStamp()) / Global.DEFAULT_PTS_PER_SECOND;
                 String outputFilename = dumpImageToFile(event.getImage(), (int)seconds);
-                GreenScreenProcess theGSP = new GreenScreenProcess(outputFilename);
+                new GreenScreenProcess(outputFilename);
                 System.out.printf("Elapsed time of %6.3f seconds wrote: %s \n", seconds, outputFilename);
                 
                 mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
@@ -76,8 +76,8 @@ public class ImageFromVideo extends MediaListenerAdapter {
         
         private String dumpImageToFile(BufferedImage image, int sec){
             try{
-                String outputFilename = outputFilePrefix + setProcess + sec + ".png";
-                ImageIO.write(image, "png", new File(outputFilename));
+                String outputFilename = outputFilePrefix + setProcess + sec + ".jpg";
+                ImageIO.write(image, "jpg", new File(outputFilename));
                 return outputFilename;
             }catch(IOException e){
                 e.printStackTrace();

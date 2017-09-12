@@ -7,76 +7,66 @@ import marvin.color.MarvinColorModelConverter;
 
 public class GreenScreenProcess {
 
-    private MarvinImage imageIn;
-    private MarvinImage imageOut;
-
-    private String pathIn;
-    private String pathOut;
+    String pathIn;
+    String pathOut;
 
     public GreenScreenProcess(String input){
         this.pathIn = input;
-        this.pathOut = input;
-        GSProcess();
+        input = input.substring(0, input.length() - 3);
+        this.pathOut = input + "png";
+        System.out.println("55" + pathOut);
+        mainFunction();
     }
 
     
-    public void GSProcess() {
-        setup();
+    public void mainFunction() {
+        MarvinImage imageIn = MarvinImageIO.loadImage(pathIn);
+        MarvinImage imageOut = new MarvinImage(imageIn.getWidth(), imageIn.getHeight());
         removeScreenColor(imageIn, imageOut);
-        savePicture();
-        System.out.println("55");
-    }
-    
-    private void setup() {
-        imageIn = MarvinImageIO.loadImage(pathIn);
-        imageOut = new MarvinImage(imageIn.getWidth(), imageIn.getHeight());
-    }
-
-    private void savePicture() {
         MarvinImageIO.saveImage(imageOut, pathOut);
     }
 
-    private void removeScreenColor(MarvinImage in, MarvinImage out) {
-        for(int y = 0; y < in.getHeight(); y++) {
-            for(int x = 0; x < in.getWidth(); x++) {
+    private void removeScreenColor(MarvinImage imageIn, MarvinImage imageOut) {
+        for(int y = 0; y < imageIn.getHeight(); y++) {
+            for(int x = 0; x < imageIn.getWidth(); x++) {
 
-                int color = in.getIntColor(x, y);
-                int r = in.getIntComponent0(x, y);
-                int g = in.getIntComponent1(x, y);
-                int b = in.getIntComponent2(x, y);
+                int color = imageIn.getIntColor(x, y);
+                int r = imageIn.getIntComponent0(x, y);
+                int g = imageIn.getIntComponent1(x, y);
+                int b = imageIn.getIntComponent2(x, y);
 
                 double[] hsv = MarvinColorModelConverter.rgbToHsv(new int[] {color});
 
                 if(hsv[0] >= 60 && hsv[0] <= 130 && hsv[1] >= 0.4 && hsv[2] >= 0.3) {
-                    out.setIntColor(x, y, 0, 127, 127, 127);
+                    imageOut.setIntColor(x, y, 0, 127, 127, 127);
                 } else {
-                    out.setIntColor(x, y, color);
+                    imageOut.setIntColor(x, y, color);
                 }
             }
         }
-        reduceColorScreen(out);
+        reduceColorScreen(imageOut);
     }
 
-    private void reduceColorScreen(MarvinImage out){
-        for(int y = 0; y < out.getHeight(); y++){
-            for(int x = 0; x < out.getWidth(); x++){
+    private void reduceColorScreen(MarvinImage imageOut){
+        for(int y = 0; y <imageOut.getHeight(); y++){
+            for(int x = 0; x < imageOut.getWidth(); x++){
                 
-                int r = out.getIntComponent0(x, y);
-                int g = out.getIntComponent1(x, y);
-                int b = out.getIntComponent2(x, y);
-                int color = out.getIntColor(x, y);
+                int r = imageOut.getIntComponent0(x, y);
+                int g = imageOut.getIntComponent1(x, y);
+                int b = imageOut.getIntComponent2(x, y);
+                int color = imageOut.getIntColor(x, y);
                 
                 double[] hsv = MarvinColorModelConverter.rgbToHsv(new int[] {color});
                 
                 if(hsv[0] >= 60 && hsv[0] <= 130 && hsv[1] >= 0.15 && hsv[2] > 0.15) {
                     if((r*b != 0 && (g*g)/(r*b) >= 1.5 )){
-                        out.setIntColor(x, y, 255, (int)(r*1.4), (int)g, (int)(b*1.4));
+                        imageOut.setIntColor(x, y, 255, (int)(r*1.4), (int)g, (int)(b*1.4));
                     } else {
-                        out.setIntColor(x, y, 255, (int)(r*1.2), g, (int)(b*1.2));
+                        imageOut.setIntColor(x, y, 255, (int)(r*1.2), g, (int)(b*1.2));
                     }
                 }
             }
         }
-        MarvinPluginCollection.alphaBoundary(out, 6);
+//        MarvinPluginCollection.alphaBoundary(imageOut, 6); <--- error
     }
 } 
